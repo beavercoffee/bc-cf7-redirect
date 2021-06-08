@@ -54,48 +54,33 @@ if(!class_exists('BC_CF7_Redirect')){
     	//
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        public function l10n(){
-            $l10n = [];
-			$posts = get_posts([
-                'post_type' => 'wpcf7_contact_form',
-                'posts_per_page' => -1,
-            ]);
-            if($posts){
-                foreach($posts as $post){
-                    $contact_form = wpcf7_contact_form($post->ID);
-					if($contact_form){
-						if($contact_form->is_true('bc_redirect')){
-							$l10n[$post->ID] = '';
-						} else {
-							$redirect = $contact_form->pref('bc_redirect');
-							if(null !== $redirect){
-								if(wpcf7_is_url($redirect)){
-									$l10n[$post->ID] = $redirect;
-								} else {
-									$l10n[$post->ID] = '';
-								}
-							}
-						}
-					}
-                }
-            }
-            $l10n = apply_filters('bc_cf7_redirect_l10n', $l10n);
-			return $l10n;
-        }
-
-    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
         public function wpcf7_enqueue_scripts(){
             $src = plugin_dir_url($this->file) . 'assets/bc-cf7-redirect.js';
             $ver = filemtime(plugin_dir_path($this->file) . 'assets/bc-cf7-redirect.js');
             wp_add_inline_script('bc-cf7-redirect', 'bc_cf7_redirect.init();');
             wp_enqueue_script('bc-cf7-redirect', $src, ['contact-form-7'], $ver, true);
-			wp_localize_script('bc-cf7-redirect', 'bc_cf7_redirects', $this->l10n());
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public function wpcf7_form_hidden_fields($hidden_fields){
+            $contact_form = wpcf7_get_current_contact_form();
+            if($contact_form !== null){
+                $redirect = null;
+                if($contact_form->is_true('bc_redirect')){
+                    $redirect = '';
+                } else {
+                    $redirect = $contact_form->pref('bc_redirect');
+                    if(null !== $redirect){
+                        if(!wpcf7_is_url($redirect)){
+                            $redirect = '';
+                        }
+                    }
+                }
+                if(null !== $redirect){
+                    $hidden_fields['bc_redirect'] = $redirect;
+                }
+            }
             $hidden_fields['bc_referer'] = isset($_GET['bc_referer']) ? wpcf7_sanitize_query_var($_GET['bc_referer']) : '';
             $hidden_fields['bc_uniqid'] = uniqid('bc_');
             $hidden_fields = apply_filters('bc_cf7_redirect_hidden_fields', $hidden_fields);
