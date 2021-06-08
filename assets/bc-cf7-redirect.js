@@ -1,4 +1,4 @@
-if(typeof bc_cf7_redirect === 'undefined'){
+if('undefined' !== typeof(bc_cf7_redirect)){
     var bc_cf7_redirect = {
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,10 +72,12 @@ if(typeof bc_cf7_redirect === 'undefined'){
 
         redirect: function(event){
             var redirect = '';
-            if('undefined' !== typeof(bc_cf7_redirects[event.detail.contactFormId])){
-                redirect = bc_cf7_redirects[event.detail.contactFormId];
-                if(redirect === ''){
-                    redirect = jQuery(location).attr('href');
+            if('undefined' !== typeof(bc_cf7_redirects)){
+                if('undefined' !== typeof(bc_cf7_redirects[event.detail.contactFormId])){
+                    redirect = bc_cf7_redirects[event.detail.contactFormId];
+                    if(redirect === ''){
+                        redirect = jQuery(location).attr('href');
+                    }
                 }
             }
             return redirect;
