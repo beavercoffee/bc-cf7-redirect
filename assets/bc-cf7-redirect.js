@@ -52,24 +52,13 @@ if('undefined' === typeof(bc_cf7_redirect)){
 
         init: function(){
             jQuery('.wpcf7-form').on({
-				wpcf7reset: bc_cf7_redirect.wpcf7reset,
+				wpcf7reset: bc_cf7_redirect.maybe_redirect,
 			});
         },
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        parse_str: function(str){
-            var i = 0, search_object = {}, search_array = [];
-            search_array = str.replace('?', '').split('&');
-            for(i = 0; i < search_array.length; i ++){
-                search_object[search_array[i].split('=')[0]] = search_array[i].split('=')[1];
-            }
-            return search_object;
-        },
-
-    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        wpcf7reset: function(event){
+        maybe_redirect: function(event){
             var redirect = '', unit_tag = '';
 			unit_tag = event.detail.unitTag;
             if(jQuery('#' + unit_tag).find('input[name="bc_redirect"]').length){
@@ -84,6 +73,17 @@ if('undefined' === typeof(bc_cf7_redirect)){
                 }
                 jQuery(location).attr('href', redirect);
             }
+        },
+
+    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        parse_str: function(str){
+            var i = 0, search_object = {}, search_array = [];
+            search_array = str.replace('?', '').split('&');
+            for(i = 0; i < search_array.length; i ++){
+                search_object[search_array[i].split('=')[0]] = search_array[i].split('=')[1];
+            }
+            return search_object;
         },
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
