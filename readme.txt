@@ -1,6 +1,6 @@
 === BC CF7 Redirect ===
-Contributors: vidsoe
-Donate link: https://vidsoe.org
+Contributors: beavercoffee
+Donate link: https://beaver.coffee
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.7
