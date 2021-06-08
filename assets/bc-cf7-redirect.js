@@ -81,8 +81,7 @@ if('undefined' === typeof(bc_cf7_redirect)){
             }
             if('' !== redirect){
 				ajax_loader = jQuery('#' + unit_tag).find('.ajax-loader');
-                jQuery('#' + unit_tag).find('.wpcf7-form').children().not('.wpcf7-response-output').hide();
-				jQuery('#' + unit_tag).find('.wpcf7-form').append(ajax_loader);
+                jQuery('#' + unit_tag).find('.wpcf7-form').children().not('.wpcf7-response-output').hide().end().end().append(ajax_loader);
 				ajax_loader.css({
 					margin: 0,
 					visibility: 'visible',
