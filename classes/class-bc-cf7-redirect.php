@@ -81,7 +81,9 @@ if(!class_exists('BC_CF7_Redirect')){
                     $hidden_fields['bc_redirect'] = $redirect;
                 }
             }
-            $hidden_fields['bc_referer'] = isset($_GET['bc_referer']) ? wpcf7_sanitize_query_var($_GET['bc_referer']) : '';
+            if(isset($_GET['bc_referer'])){
+                $hidden_fields['bc_referer'] = wpcf7_sanitize_query_var($_GET['bc_referer']);
+            }
             $hidden_fields['bc_uniqid'] = uniqid('bc_');
             $hidden_fields = apply_filters('bc_cf7_redirect_hidden_fields', $hidden_fields);
             return $hidden_fields;
