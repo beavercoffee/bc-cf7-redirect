@@ -44,6 +44,8 @@ if(!class_exists('BC_CF7_Redirect')){
 
     	private function __construct($file = ''){
             $this->file = $file;
+            add_action('wpcf7_enqueue_scripts', [$this, 'wpcf7_enqueue_scripts']);
+            add_filter('wpcf7_form_hidden_fields', [$this, 'wpcf7_form_hidden_fields']);
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -77,17 +79,27 @@ if(!class_exists('BC_CF7_Redirect')){
 					}
                 }
             }
+            $l10n = apply_filters('bc_cf7_redirect_l10n', $l10n);
 			return $l10n;
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        public function l10n(){
+        public function wpcf7_enqueue_scripts(){
             $src = plugin_dir_url($this->file) . 'assets/bc-cf7-redirect.js';
             $ver = filemtime(plugin_dir_path($this->file) . 'assets/bc-cf7-redirect.js');
             wp_add_inline_script('bc-cf7-redirect', 'bc_cf7_redirect.init();');
             wp_enqueue_script('bc-cf7-redirect', $src, ['contact-form-7'], $ver, true);
 			wp_localize_script('bc-cf7-redirect', 'bc_cf7_redirects', $this->l10n());
+        }
+
+    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        public function wpcf7_form_hidden_fields($hidden_fields){
+            $hidden_fields['bc_referer'] = isset($_GET['bc_referer']) ? wpcf7_sanitize_query_var($_GET['bc_referer']) : '';
+            $hidden_fields['bc_uniqid'] = uniqid('bc_');
+            $hidden_fields = apply_filters('bc_cf7_redirect_hidden_fields', $hidden_fields);
+            return $hidden_fields;
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
