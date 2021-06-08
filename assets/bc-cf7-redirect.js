@@ -1,4 +1,4 @@
-if('undefined' !== typeof(bc_cf7_redirect)){
+if('undefined' === typeof(bc_cf7_redirect)){
     var bc_cf7_redirect = {
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
