@@ -2,7 +2,7 @@
 /*
 Author: Beaver Coffee
 Author URI: https://beaver.coffee
-Description: Add redirection after Contact Form 7 form reset.
+Description: Redirect after Contact Form 7 form reset.
 Domain Path:
 License: GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html

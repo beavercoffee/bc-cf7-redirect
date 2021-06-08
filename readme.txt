@@ -13,7 +13,7 @@ BC CF7 Redirect
 
 == Description ==
 
-Add redirection after Contact Form 7 form reset.
+Redirect after Contact Form 7 form reset.
 
 == Changelog ==
 
