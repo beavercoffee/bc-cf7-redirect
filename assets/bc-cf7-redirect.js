@@ -71,7 +71,7 @@ if('undefined' === typeof(bc_cf7_redirect)){
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         wpcf7mailsent: function(event){
-            var redirect = '', unit_tag = '';
+            var message = '', redirect = '', unit_tag = '';
 			unit_tag = event.detail.unitTag;
             if(jQuery('#' + unit_tag).find('input[name="bc_redirect"]').length){
                 redirect = jQuery('#' + unit_tag).find('input[name="bc_redirect"]').val();
@@ -80,8 +80,13 @@ if('undefined' === typeof(bc_cf7_redirect)){
                 }
             }
             if('' !== redirect){
-                jQuery('#' + unit_tag).find('.wpcf7-form').children().hide();
-				jQuery('#' + unit_tag).find('.wpcf7-form').prepend('<div class="alert alert-info bc-cf7-redirect-message" role="alert">' + bc_cf7_redirect_object.message + '</div>');
+                if(jQuery('#' + unit_tag).find('input[name="bc_redirect_message"]').length){
+                    message = jQuery('#' + unit_tag).find('input[name="bc_redirect_message"]').val();
+                    if('' === message){
+                        message = bc_cf7_redirect_object.message;
+                    }
+                }
+                jQuery('#' + unit_tag).find('.wpcf7-form').children().hide().end().prepend('<div class="alert alert-info bc-cf7-redirect-message" role="alert">' + message + '</div>');
             }
         },
 

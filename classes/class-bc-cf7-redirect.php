@@ -83,6 +83,10 @@ if(!class_exists('BC_CF7_Redirect')){
                 if(null !== $redirect){
                     $hidden_fields['bc_redirect'] = $redirect;
                 }
+                $message = $contact_form->pref('bc_redirect_message');
+                if(null !== $message){
+                    $hidden_fields['bc_redirect_message'] = $message;
+                }
             }
             if(isset($_GET['bc_referer'])){
                 $hidden_fields['bc_referer'] = wpcf7_sanitize_query_var($_GET['bc_referer']);
