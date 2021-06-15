@@ -82,9 +82,9 @@ if('undefined' === typeof(bc_cf7_redirect)){
             if('' !== redirect){
                 if(jQuery('#' + unit_tag).find('input[name="bc_redirect_message"]').length){
                     message = jQuery('#' + unit_tag).find('input[name="bc_redirect_message"]').val();
-                    if('' === message){
-                        message = bc_cf7_redirect_object.message;
-                    }
+                }
+                if('' === message){
+                    message = bc_cf7_redirect_object.message;
                 }
                 jQuery('#' + unit_tag).find('.wpcf7-form').children().hide().end().prepend('<div class="alert alert-info bc-cf7-redirect-message" role="alert">' + message + '</div>');
             }
