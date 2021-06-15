@@ -58,6 +58,9 @@ if(!class_exists('BC_CF7_Redirect')){
             $src = plugin_dir_url($this->file) . 'assets/bc-cf7-redirect.js';
             $ver = filemtime(plugin_dir_path($this->file) . 'assets/bc-cf7-redirect.js');
             wp_enqueue_script('bc-cf7-redirect', $src, ['contact-form-7'], $ver, true);
+            wp_localize_script( 'bc-cf7-redirect', 'bc_cf7_redirect_object', [
+				'message' => __('Loading&hellip;'),
+			]);
             wp_add_inline_script('bc-cf7-redirect', 'bc_cf7_redirect.init();');
         }
 

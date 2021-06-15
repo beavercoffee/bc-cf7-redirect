@@ -52,27 +52,9 @@ if('undefined' === typeof(bc_cf7_redirect)){
 
         init: function(){
             jQuery('.wpcf7-form').on({
-				wpcf7reset: bc_cf7_redirect.maybe_redirect,
+                wpcf7mailsent: bc_cf7_redirect.wpcf7mailsent,
+				wpcf7reset: bc_cf7_redirect.wpcf7reset,
 			});
-        },
-
-    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        maybe_redirect: function(event){
-            var redirect = '', unit_tag = '';
-			unit_tag = event.detail.unitTag;
-            if(jQuery('#' + unit_tag).find('input[name="bc_redirect"]').length){
-                redirect = jQuery('#' + unit_tag).find('input[name="bc_redirect"]').val();
-                if('' === redirect){
-                    redirect = jQuery(location).attr('href');
-                }
-            }
-            if('' !== redirect){
-                if(jQuery('#' + unit_tag).find('input[name="bc_uniqid"]').length){
-                    redirect = bc_cf7_redirect.add_query_arg('bc_referer', jQuery('#' + unit_tag).find('input[name="bc_uniqid"]').val(), redirect);
-                }
-                jQuery(location).attr('href', redirect);
-            }
         },
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,6 +66,45 @@ if('undefined' === typeof(bc_cf7_redirect)){
                 search_object[search_array[i].split('=')[0]] = search_array[i].split('=')[1];
             }
             return search_object;
+        },
+
+    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        wpcf7mailsent: function(event){
+            var redirect = '', unit_tag = '';
+			unit_tag = event.detail.unitTag;
+            if(jQuery('#' + unit_tag).find('input[name="bc_redirect"]').length){
+                redirect = jQuery('#' + unit_tag).find('input[name="bc_redirect"]').val();
+                if('' === redirect){
+                    redirect = jQuery(location).attr('href');
+                }
+            }
+            if('' !== redirect){
+                jQuery('#' + unit_tag).find('.wpcf7-form').children().hide();
+				jQuery('#' + unit_tag).find('.wpcf7-form').prepend('<div class="alert alert-info bc-cf7-redirect-message" role="alert">' + bc_cf7_redirect_object.message + '</div>');
+            }
+        },
+
+    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        wpcf7reset: function(event){
+            var redirect = '', unit_tag = '';
+			unit_tag = event.detail.unitTag;
+            if(jQuery('#' + unit_tag).find('input[name="bc_redirect"]').length){
+                redirect = jQuery('#' + unit_tag).find('input[name="bc_redirect"]').val();
+                if('' === redirect){
+                    redirect = jQuery(location).attr('href');
+                }
+            }
+            if('' !== redirect){
+                if(jQuery('#' + unit_tag).find('.bc-cf7-redirect-message').length){
+                    jQuery('#' + unit_tag).find('.bc-cf7-redirect-message').append('<span class="ajax-loader float-right m-0 visible"></span>');
+                }
+                if(jQuery('#' + unit_tag).find('input[name="bc_uniqid"]').length){
+                    redirect = bc_cf7_redirect.add_query_arg('bc_referer', jQuery('#' + unit_tag).find('input[name="bc_uniqid"]').val(), redirect);
+                }
+                jQuery(location).attr('href', redirect);
+            }
         },
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
