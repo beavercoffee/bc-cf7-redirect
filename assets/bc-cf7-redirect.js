@@ -71,7 +71,7 @@ if('undefined' === typeof(bc_cf7_redirect)){
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         wpcf7mailsent: function(event){
-            var message = '', redirect = '', unit_tag = '';
+            var redirect = '', unit_tag = '';
 			unit_tag = event.detail.unitTag;
             if(jQuery('#' + unit_tag).find('input[name="bc_redirect"]').length){
                 redirect = jQuery('#' + unit_tag).find('input[name="bc_redirect"]').val();
@@ -80,13 +80,9 @@ if('undefined' === typeof(bc_cf7_redirect)){
                 }
             }
             if('' !== redirect){
-                if(jQuery('#' + unit_tag).find('input[name="bc_redirect_message"]').length){
-                    message = jQuery('#' + unit_tag).find('input[name="bc_redirect_message"]').val();
+                if(jQuery('#' + unit_tag).find('input[name="bc_loading"]').length){
+                    jQuery('#' + unit_tag).find('.wpcf7-form').children().hide().end().prepend('<div class="alert alert-info bc-cf7-redirect" role="alert">' + jQuery('#' + unit_tag).find('input[name="bc_loading"]').val() + '</div>');
                 }
-                if('' === message){
-                    message = bc_cf7_redirect_object.message;
-                }
-                jQuery('#' + unit_tag).find('.wpcf7-form').children().hide().end().prepend('<div class="alert alert-info bc-cf7-redirect-message" role="alert">' + message + '</div>');
             }
         },
 
@@ -102,8 +98,8 @@ if('undefined' === typeof(bc_cf7_redirect)){
                 }
             }
             if('' !== redirect){
-                if(jQuery('#' + unit_tag).find('.bc-cf7-redirect-message').length){
-                    jQuery('#' + unit_tag).find('.bc-cf7-redirect-message').append('<span class="ajax-loader float-right m-0 visible"></span>');
+                if(jQuery('#' + unit_tag).find('.bc-cf7-redirect').length){
+                    jQuery('#' + unit_tag).find('.bc-cf7-redirect').append('<span class="ajax-loader float-right m-0 visible"></span>');
                 }
                 if(jQuery('#' + unit_tag).find('input[name="bc_uniqid"]').length){
                     redirect = bc_cf7_redirect.add_query_arg('bc_referer', jQuery('#' + unit_tag).find('input[name="bc_uniqid"]').val(), redirect);

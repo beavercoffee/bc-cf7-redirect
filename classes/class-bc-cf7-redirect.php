@@ -58,9 +58,6 @@ if(!class_exists('BC_CF7_Redirect')){
             $src = plugin_dir_url($this->file) . 'assets/bc-cf7-redirect.js';
             $ver = filemtime(plugin_dir_path($this->file) . 'assets/bc-cf7-redirect.js');
             wp_enqueue_script('bc-cf7-redirect', $src, ['contact-form-7'], $ver, true);
-            wp_localize_script( 'bc-cf7-redirect', 'bc_cf7_redirect_object', [
-				'message' => __('Loading&hellip;'),
-			]);
             wp_add_inline_script('bc-cf7-redirect', 'bc_cf7_redirect.init();');
         }
 
@@ -82,10 +79,11 @@ if(!class_exists('BC_CF7_Redirect')){
                 }
                 if(null !== $redirect){
                     $hidden_fields['bc_redirect'] = $redirect;
-                }
-                $message = $contact_form->pref('bc_redirect_message');
-                if(null !== $message){
-                    $hidden_fields['bc_redirect_message'] = $message;
+                    $loading = $contact_form->pref('bc_loading');
+                    if(null === $loading or '' === $loading){
+                        $loading = __('Loading&hellip;');
+                    }
+                    $hidden_fields['bc_loading'] = $loading;
                 }
             }
             if(isset($_GET['bc_referer'])){
