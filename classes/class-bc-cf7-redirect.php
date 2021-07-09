@@ -101,11 +101,9 @@ if(!class_exists('BC_CF7_Redirect')){
             }
             switch($response['status']){
     			case 'mail_sent':
-                    $response['bc_loading'] = __('Loading&hellip;');
                     $response['bc_redirect_url'] = $redirect;
                     break;
     			default:
-                    $response['bc_loading'] = '';
                     $response['bc_redirect_url'] = '';
                     break;
     		}
