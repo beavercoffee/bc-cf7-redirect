@@ -12,7 +12,7 @@ Plugin URI: https://github.com/beavercoffee/bc-cf7-redirect
 Requires at least: 5.7
 Requires PHP: 5.6
 Text Domain: bc-cf7-redirect
-Version: 1.7.8
+Version: 1.7.9
 */
 
 if(defined('ABSPATH')){

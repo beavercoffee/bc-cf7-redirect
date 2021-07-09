@@ -51,6 +51,35 @@ if(!class_exists('BC_CF7_Redirect')){
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    	private function get_redirect($contact_form = null, $submission = null){
+            if(null === $contact_form){
+                $contact_form = wpcf7_get_current_contact_form();
+            }
+            if(null === $contact_form){
+                return '';
+            }
+            $redirect = $contact_form->pref('bc_redirect');
+            if(null === $redirect){
+                return '';
+            }
+            if($contact_form->is_true('bc_redirect')){
+                if(null === $submission){
+                    $submission = WPCF7_Submission::get_instance();
+                }
+                if(null === $submission){
+                    return home_url();
+                } else {
+                    return $submission->get_meta('url');
+                }
+            }
+            if(!wpcf7_is_url($redirect)){
+                return '';
+            }
+            return $redirect;
+        }
+
+    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     	//
     	// public
     	//
@@ -76,28 +105,12 @@ if(!class_exists('BC_CF7_Redirect')){
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public function wpcf7_feedback_response($response, $result){
-            $contact_form = wpcf7_get_current_contact_form();
-            if(null === $contact_form){
-                return $response;
-            }
-            $redirect = $contact_form->pref('bc_redirect');
-            if(null === $redirect){
-                return $response;
-            }
-            $submission = WPCF7_Submission::get_instance();
-            if(null === $submission){
-                return $response;
-            }
-            if($contact_form->is_true('bc_redirect')){
-                $redirect = $submission->get_meta('url');
-            } else {
-                if(!wpcf7_is_url($redirect)){
-                    $redirect = $submission->get_meta('url');
+            $redirect = $this->get_redirect();
+            if('' !== $redirect){
+                $uniqid = isset($response['bc_uniqid']) ? $response['bc_uniqid'] : '';
+                if('' !== $uniqid){
+                    $redirect = add_query_arg('bc_referer', $uniqid, $redirect);
                 }
-            }
-            $uniqid = isset($response['bc_uniqid']) ? $response['bc_uniqid'] : '';
-            if('' !== $uniqid){
-                $redirect = add_query_arg('bc_referer', $uniqid, $redirect);
             }
             switch($response['status']){
     			case 'mail_sent':
