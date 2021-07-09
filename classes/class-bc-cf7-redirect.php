@@ -17,14 +17,17 @@ if(!class_exists('BC_CF7_Redirect')){
     	//
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    	public static function get_instance($file = ''){
-            if(null === self::$instance){
-                if(@is_file($file)){
-                    self::$instance = new self($file);
-                } else {
-                    wp_die(__('File doesn&#8217;t exist?'));
-                }
+        public static function get_instance($file = ''){
+            if(null !== self::$instance){
+                return self::$instance;
             }
+            if('' === $file){
+                wp_die(__('File doesn&#8217;t exist?'));
+            }
+            if(!is_file($file)){
+                wp_die(sprintf(__('File &#8220;%s&#8221; doesn&#8217;t exist?'), $file));
+            }
+            self::$instance = new self($file);
             return self::$instance;
     	}
 
@@ -44,14 +47,23 @@ if(!class_exists('BC_CF7_Redirect')){
 
     	private function __construct($file = ''){
             $this->file = $file;
-            add_action('wpcf7_enqueue_scripts', [$this, 'wpcf7_enqueue_scripts']);
-            add_filter('wpcf7_form_hidden_fields', [$this, 'wpcf7_form_hidden_fields']);
+            add_action('plugins_loaded', [$this, 'plugins_loaded']);
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     	//
     	// public
     	//
+    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        public function plugins_loaded(){
+            if(!defined('WPCF7_VERSION')){
+        		return;
+        	}
+            add_action('wpcf7_enqueue_scripts', [$this, 'wpcf7_enqueue_scripts']);
+            add_filter('wpcf7_feedback_response', [$this, 'wpcf7_feedback_response'], 20, 2);
+        }
+
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public function wpcf7_enqueue_scripts(){
@@ -63,35 +75,41 @@ if(!class_exists('BC_CF7_Redirect')){
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        public function wpcf7_form_hidden_fields($hidden_fields){
+        public function wpcf7_feedback_response($response, $result){
             $contact_form = wpcf7_get_current_contact_form();
-            if($contact_form !== null){
-                $redirect = null;
-                if($contact_form->is_true('bc_redirect')){
-                    $redirect = '';
-                } else {
-                    $redirect = $contact_form->pref('bc_redirect');
-                    if(null !== $redirect){
-                        if(!wpcf7_is_url($redirect)){
-                            $redirect = '';
-                        }
-                    }
-                }
-                if(null !== $redirect){
-                    $hidden_fields['bc_redirect'] = $redirect;
-                    $loading = $contact_form->pref('bc_loading');
-                    if(null === $loading or '' === $loading){
-                        $loading = __('Loading&hellip;');
-                    }
-                    $hidden_fields['bc_loading'] = $loading;
+            if(null === $contact_form){
+                return $response;
+            }
+            $redirect = $contact_form->pref('bc_redirect');
+            if(null === $redirect){
+                return $response;
+            }
+            $submission = WPCF7_Submission::get_instance();
+            if(null === $submission){
+                return $response;
+            }
+            if($contact_form->is_true('bc_redirect')){
+                $redirect = $submission->get_meta('url');
+            } else {
+                if(!wpcf7_is_url($redirect)){
+                    $redirect = $submission->get_meta('url');
                 }
             }
-            if(isset($_GET['bc_referer'])){
-                $hidden_fields['bc_referer'] = wpcf7_sanitize_query_var($_GET['bc_referer']);
+            $uniqid = isset($response['bc_uniqid']) ? $response['bc_uniqid'] : '';
+            if('' !== $uniqid){
+                $redirect = add_query_arg('bc_referer', $uniqid, $redirect);
             }
-            $hidden_fields['bc_uniqid'] = uniqid('bc_');
-            $hidden_fields = apply_filters('bc_cf7_redirect_hidden_fields', $hidden_fields);
-            return $hidden_fields;
+            switch($response['status']){
+    			case 'mail_sent':
+                    $response['bc_loading'] = __('Loading&hellip;');
+                    $response['bc_redirect_url'] = $redirect;
+                    break;
+    			default:
+                    $response['bc_loading'] = '';
+                    $response['bc_redirect_url'] = '';
+                    break;
+    		}
+            return $response;
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
