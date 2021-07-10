@@ -93,7 +93,7 @@ if(!class_exists('BC_CF7_Redirect')){
         		return;
         	}
             add_action('wpcf7_enqueue_scripts', [$this, 'wpcf7_enqueue_scripts']);
-            add_filter('wpcf7_refill_response', [$this, 'wpcf7_refill_response']);
+            add_filter('wpcf7_feedback_response', [$this, 'wpcf7_feedback_response'], 20, 2);
             bc_build_update_checker('https://github.com/beavercoffee/bc-cf7-redirect', $this->file, 'bc-cf7-redirect');
         }
 
@@ -108,16 +108,22 @@ if(!class_exists('BC_CF7_Redirect')){
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        public function wpcf7_refill_response($response){
+        public function wpcf7_feedback_response($response){
             $redirect = $this->get_redirect();
             if('' !== $redirect){
-                // filtrar bc_cf7_redirect y reemplazarlo desde los otros plugins o desde los otros plugins filtrar con menor prioridad wpcf7_refill_response
-                /*$uniqid = isset($response['bc_uniqid']) ? $response['bc_uniqid'] : '';
+                $uniqid = isset($response['bc_uniqid']) ? $response['bc_uniqid'] : '';
                 if('' !== $uniqid){
                     $redirect = add_query_arg('bc_referer', $uniqid, $redirect);
-                }*/
+                }
             }
-            $response['bc_redirect'] = $redirect;
+            switch($response['status']){
+    			case 'mail_sent':
+                    $response['bc_redirect'] = $redirect;
+                    break;
+    			default:
+                    $response['bc_redirect'] = '';
+                    break;
+    		}
             return $response;
         }
 

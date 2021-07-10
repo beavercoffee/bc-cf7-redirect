@@ -3,16 +3,31 @@ if('undefined' === typeof(bc_cf7_redirect)){
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        handle_redirect: function(event){
-            if(event.detail.apiResponse.bc_redirect){
-                jQuery(location).attr('href', event.detail.apiResponse.bc_redirect);
+        do_redirect: function(){
+            if(bc_cf7_redirect.redirect){
+                jQuery(location).attr('href', bc_cf7_redirect.redirect);
             }
         },
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         init: function(){
-            jQuery('.wpcf7-form').on('wpcf7reset', bc_cf7_redirect.handle_redirect);
+            jQuery('.wpcf7-form').on({
+				'wpcf7mailsent': bc_cf7_redirect.set_redirect,
+				'wpcf7reset': bc_cf7_redirect.do_redirect,
+			});
+        },
+
+    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        redirect: '',
+
+    	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        set_redirect: function(event){
+            if(event.detail.apiResponse.bc_redirect){
+                bc_cf7_redirect.redirect = event.detail.apiResponse.bc_redirect;
+            }
         },
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
