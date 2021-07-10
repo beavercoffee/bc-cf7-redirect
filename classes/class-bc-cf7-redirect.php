@@ -86,11 +86,15 @@ if(!class_exists('BC_CF7_Redirect')){
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public function plugins_loaded(){
+            if(!defined('BC_FUNCTIONS')){
+        		return;
+        	}
             if(!defined('WPCF7_VERSION')){
         		return;
         	}
             add_action('wpcf7_enqueue_scripts', [$this, 'wpcf7_enqueue_scripts']);
             add_filter('wpcf7_feedback_response', [$this, 'wpcf7_feedback_response'], 20, 2);
+            bc_build_update_checker('https://github.com/beavercoffee/bc-cf7-redirect', $this->file, 'bc-cf7-redirect');
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
