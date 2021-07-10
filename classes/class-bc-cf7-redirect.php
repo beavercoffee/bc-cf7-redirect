@@ -111,6 +111,7 @@ if(!class_exists('BC_CF7_Redirect')){
         public function wpcf7_feedback_response($response, $result){
             $redirect = $this->get_redirect();
             if('' !== $redirect){
+                // considerar filtro bc_cf7_redirect y  reemplazarlo desde los otros plugins
                 $uniqid = isset($response['bc_uniqid']) ? $response['bc_uniqid'] : '';
                 if('' !== $uniqid){
                     $redirect = add_query_arg('bc_referer', $uniqid, $redirect);
@@ -118,10 +119,10 @@ if(!class_exists('BC_CF7_Redirect')){
             }
             switch($response['status']){
     			case 'mail_sent':
-                    $response['bc_redirect_url'] = $redirect;
+                    $response['bc_redirect'] = $redirect;
                     break;
     			default:
-                    $response['bc_redirect_url'] = '';
+                    $response['bc_redirect'] = '';
                     break;
     		}
             return $response;
