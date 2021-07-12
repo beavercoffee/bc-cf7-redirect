@@ -5,7 +5,9 @@ if('undefined' === typeof(bc_cf7_redirect)){
 
         do_redirect: function(){
             if(bc_cf7_redirect.redirect){
-                jQuery(location).attr('href', bc_cf7_redirect.redirect);
+                setTimeout(function(){
+                    jQuery(location).attr('href', bc_cf7_redirect.redirect);
+                }, 200);
             }
         },
 
