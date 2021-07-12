@@ -7,7 +7,7 @@ if('undefined' === typeof(bc_cf7_redirect)){
             if(bc_cf7_redirect.redirect){
                 setTimeout(function(){
                     jQuery(location).attr('href', bc_cf7_redirect.redirect);
-                }, 500);
+                }, 1000);
             }
         },
 
