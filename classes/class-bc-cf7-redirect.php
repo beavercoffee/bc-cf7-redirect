@@ -47,23 +47,14 @@ if(!class_exists('BC_CF7_Redirect')){
 
     	private function __construct($file = ''){
             $this->file = $file;
-            add_action('plugins_loaded', [$this, 'plugins_loaded']);
+            add_action('bc_cf7_loaded', [$this, 'bc_cf7_loaded']);
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     	private function get_redirect($contact_form = null, $submission = null){
-            if(null === $contact_form){
-                $contact_form = wpcf7_get_current_contact_form();
-            }
-            if(null === $contact_form){
-                return '';
-            }
-            $redirect = $contact_form->pref('bc_redirect');
-            if(null === $redirect){
-                return '';
-            }
-            if($contact_form->is_true('bc_redirect')){
+            $redirect = bc_cf7()->pref('bc_redirect', $contact_form);
+            if(bc_cf7()->is_true('bc_redirect', $contact_form)){
                 if(null === $submission){
                     $submission = WPCF7_Submission::get_instance();
                 }
@@ -85,16 +76,11 @@ if(!class_exists('BC_CF7_Redirect')){
     	//
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        public function plugins_loaded(){
-            if(!defined('BC_FUNCTIONS')){
-        		return;
-        	}
-            if(!defined('WPCF7_VERSION')){
-        		return;
-        	}
+        public function bc_cf7_loaded(){
             add_action('wpcf7_enqueue_scripts', [$this, 'wpcf7_enqueue_scripts']);
             add_filter('wpcf7_feedback_response', [$this, 'wpcf7_feedback_response'], 20, 2);
             bc_build_update_checker('https://github.com/beavercoffee/bc-cf7-redirect', $this->file, 'bc-cf7-redirect');
+            do_action('bc_cf7_redirect_loaded');
         }
 
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,21 +95,18 @@ if(!class_exists('BC_CF7_Redirect')){
     	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public function wpcf7_feedback_response($response){
-            $redirect = $this->get_redirect();
-            if('' !== $redirect){
-                $uniqid = isset($response['bc_uniqid']) ? $response['bc_uniqid'] : '';
-                if('' !== $uniqid){
-                    $redirect = add_query_arg('bc_referer', $uniqid, $redirect);
+            if('mail_sent' === $response['status']){
+                $redirect = $this->get_redirect();
+                if('' !== $redirect){
+                    $uniqid = isset($response['bc_uniqid']) ? $response['bc_uniqid'] : '';
+                    if('' !== $uniqid){
+                        $redirect = add_query_arg('bc_referer', $uniqid, $redirect);
+                    }
                 }
+                $response['bc_redirect'] = $redirect;
+            } else {
+                $response['bc_redirect'] = '';
             }
-            switch($response['status']){
-    			case 'mail_sent':
-                    $response['bc_redirect'] = $redirect;
-                    break;
-    			default:
-                    $response['bc_redirect'] = '';
-                    break;
-    		}
             return $response;
         }
 
